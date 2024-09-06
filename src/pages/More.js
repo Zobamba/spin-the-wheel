@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './More.scss';
-import { faArrowRightToBracket, faLegal, faLink, faUserCircle, faUserSecret } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightToBracket, faLegal, faUserCircle, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 
 const More = () => {
@@ -46,11 +46,6 @@ const More = () => {
               <li>
                 <Link to="/">
                   <FontAwesomeIcon className="icon" icon={faLegal} />Terms & conditions
-                </Link>
-              </li>
-              <li>
-                <Link to="/">
-                  <FontAwesomeIcon className="icon" icon={faLink} />Link Google Spreadsheet
                 </Link>
               </li>
               <li>

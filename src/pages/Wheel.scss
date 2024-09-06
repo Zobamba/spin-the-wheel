@@ -211,12 +211,14 @@
         margin: 1rem 0;
         color: #333;
         font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
       }
 
       strong {
         color: #333;
         font-weight: 700;
         font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
       }
     }
   }
@@ -253,12 +255,40 @@
       .wheel-id {
         text-align: start;
         align-self: center;
+        font-weight: 100;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
 
         span {
           color: #333;
           font-size: 16px;
           font-weight: 700;
           margin-right: 5px;
+        }
+
+        .download {
+          margin-top: 1rem;
+          width: auto;
+
+          button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background: none;
+            border: 0.5px solid #3183ff;
+            border-radius: 25px;
+            color: #3183ff;
+            font-size: 12px;
+            font-family: "Montserrat", sans-serif;
+            cursor: pointer;
+
+            img {
+              width: 15px;
+              height: 15px;
+              margin-left: 10px;
+            }
+          }
         }
       }
     }

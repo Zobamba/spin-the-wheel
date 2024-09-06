@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
 import './GuestUserSpinResults.scss';
 
 const GuestUserSpinResults = ({ setViewResults, wheel }) => {
@@ -100,6 +101,23 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
   
     doc.save('spin-results.pdf');
   };
+
+  const handleDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      guestResults.map((result, index) => ({
+        Index: index + 1,
+        Username: result.username,
+        Winner: result.winner,
+        Date: new Date(result.date).toLocaleDateString(),
+        Time: new Date(result.date).toLocaleTimeString()
+      }))
+    );
+  
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Spin Results');
+  
+    XLSX.writeFile(wb, 'spin-results.xlsx');
+  };  
   
   return (
     <div className="modal-container">
@@ -131,7 +149,8 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="download">
-              <button onClick={handleDownloadPDF}>Download PDF</button>
+              <button className="btn" onClick={handleDownloadPDF}>Download PDF</button>
+              <button onClick={handleDownloadExcel}>Download Excel</button>
             </div>
           </div>
         </div>
