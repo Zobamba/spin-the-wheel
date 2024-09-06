@@ -1,32 +1,55 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 import { v4 as uuidv4 } from 'uuid';
 import spin from '../sounds/spin.mp3';
+import clap from '../sounds/clap.mp3';
 import Header from './Header';
+import More from './More';
+import ShareModal from './ShareModal';
+// import Sponsors from './Sponsors';
+import LoginModal from './LoginModal';
+import Winner from './Winner';
 import './Wheel.scss';
-
-const preExistingNames = [
-  'Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'
-];
 
 const Wheel = ({ isAdmin }) => {
   const { id } = useParams();
+
   const [wheel, setWheel] = useState(null);
+  const [adminWheels, setAdminWheels] = useState({});
+  const [expandedWheels, setExpandedWheels] = useState([]);
 
   const [newName, setNewName] = useState('');
   const [winner, setWinner] = useState(null);
+  const [isWinner, setIsWinner] = useState(false);
 
   const [results, setResults] = useState(false);
   const [entries, setEntries] = useState(true);
+  const [history, setHistory] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState();
+  const [shareModalVisible, setShareModalVisible] = useState();
+  const [modalOpen, setModalOpen] = useState(true);
 
   const wheelRef = useRef();
-  const audioRef = useRef(new Audio(spin));
+  const spinAudioRef = useRef(new Audio(spin));
+  const clapAudioRef = useRef(new Audio(clap));
 
   useEffect(() => {
+    const preExistingNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'];
     const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
-    const existingWheel = storedWheels[id] || { id, names: [...preExistingNames], results: [] };
-    setWheel(existingWheel);
-  }, [id]);
+
+    if (isAdmin) {
+      setAdminWheels(storedWheels);
+
+      const adminWheelId = id || uuidv4();
+      const existingWheel = storedWheels[adminWheelId] || { id: adminWheelId, names: [...preExistingNames], results: [] };
+      setWheel(existingWheel);
+    } else {
+      const existingWheel = storedWheels[id] || { id, names: [...preExistingNames], results: [] };
+      setWheel(existingWheel);
+    }
+  }, [id, isAdmin]);
 
   useEffect(() => {
     if (wheel) {
@@ -36,24 +59,34 @@ const Wheel = ({ isAdmin }) => {
     }
   }, [wheel]);
 
+  useEffect(() => {
+    if (isAdmin) {
+      const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
+      setAdminWheels(Object.values(storedWheels));  // Load all wheels for admin
+    }
+  }, [isAdmin]);
+
   const handleSpinWheel = () => {
     if (wheel.names.length === 0) return;
 
-    const audio = audioRef.current;
-    audio.currentTime = 0;
-    audio.play();
+    const spinAudio = spinAudioRef.current;
+    spinAudio.currentTime = 0;
+    spinAudio.play();
 
     const randomIndex = Math.floor(Math.random() * wheel.names.length);
     spinAnimation(randomIndex);
   };
 
-  const handleShareLink = () => {
-    const newWheelId = uuidv4();
+  const handleNewWheel = () => {
     const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
-    storedWheels[newWheelId] = wheel;
-    localStorage.setItem('wheels', JSON.stringify(storedWheels));
-    const shareableLink = `${window.location.origin}/wheel/${newWheelId}`;
-    alert(`Share this link: ${shareableLink}`);
+    setAdminWheels(Object.values(storedWheels));
+    const preExistingNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'];
+
+    const newWheelId = uuidv4();
+    const newWheel = { id: newWheelId, names: [...preExistingNames], results: [] };
+    setWheel(newWheel);
+    setEntries(true);
+    setResults(false);
   };
 
   const spinAnimation = (randomIndex) => {
@@ -62,20 +95,38 @@ const Wheel = ({ isAdmin }) => {
     const spins = 5;
     const totalRotation = randomIndex * degreesPerSegment + 360 * spins;
     const wheelElement = wheelRef.current;
-    const audio = audioRef.current;
+    const spinAudio = spinAudioRef.current;
 
     wheelElement.style.transition = 'transform 6s ease-out';
     wheelElement.style.transform = `rotate(${totalRotation}deg)`;
 
+    const triggerConfetti = (x, y) => {
+      let count = 0;
+      const intervalId = setInterval(() => {
+        if (count >= 3) {  // Stop after 3 times
+          clearInterval(intervalId);
+        } else {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { x: x, y: y },  // Left side
+            colors: ['#ff0', '#ff5733', '#00ff00', '#00f', '#f0f'],
+          });
+          count++;
+        }
+      }, 1000);  // Repeat every 1 second (1000 milliseconds)
+    };
+
     setTimeout(() => {
-      audio.pause();
-      audio.currentTime = 0;
+      spinAudio.pause();
+      spinAudio.currentTime = 0;
     }, 6000);
 
     setTimeout(() => {
+      setIsWinner(true);
       const finalRotation = totalRotation % 360;
 
-      const pointerPosition = 270;
+      const pointerPosition = 360;
       const adjustedRotation = (finalRotation + pointerPosition) % 360;
 
       let winningIndex = Math.floor((segments - (adjustedRotation / degreesPerSegment)) % segments);
@@ -85,21 +136,34 @@ const Wheel = ({ isAdmin }) => {
       }
 
       const newWinner = wheel.names[winningIndex];
+      const username = localStorage.getItem('name');
 
       setWinner(newWinner);
       setWheel({
         ...wheel,
         results: [
           ...wheel.results,
-          { username: 'Zoba', winner: newWinner, date: new Date() }
+          { username: username, winner: newWinner, date: new Date() }
         ],
       });
 
       wheelElement.style.transition = 'none';
       wheelElement.style.transform = `rotate(${finalRotation}deg)`;
+
+      triggerConfetti(0.2, 0.5)
+      triggerConfetti(0.8, 0.5)
+      triggerConfetti(0.5, 0.2)
+      triggerConfetti(0.5, 0.8)
+      triggerConfetti(0.4, 0.1)
+
+      clapAudioRef.current.play();
+      setTimeout(() => {
+        clapAudioRef.current.pause();
+        clapAudioRef.current.currentTime = 0;
+      }, 12000);
+
     }, 6000);
   };
-
 
   const handleNameChange = (index, value) => {
     const updatedNames = [...wheel.names];
@@ -115,6 +179,14 @@ const Wheel = ({ isAdmin }) => {
     if (newName.trim() === '') return;
     setWheel({ ...wheel, names: [...wheel.names, newName.trim()] });
     setNewName('');
+  };
+
+  const toggleWheelResults = (wheelId) => {
+    if (expandedWheels.includes(wheelId)) {
+      setExpandedWheels(expandedWheels.filter(id => id !== wheelId));
+    } else {
+      setExpandedWheels([...expandedWheels, wheelId]);
+    }
   };
 
   if (!wheel) return <div>Loading...</div>;
@@ -139,10 +211,21 @@ const Wheel = ({ isAdmin }) => {
 
   return (
     <div className="container">
-      <Header />
+      <Header
+        onNew={handleNewWheel}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        setShareModalVisible={setShareModalVisible}
+        isAdmin={isAdmin}
+      />
+      <div className="more">
+        {isModalVisible && <More />}
+      </div>
       <div className="wheel-container">
-        <div className="winner">
-          {winner && <h2><span> Winner: </span>{winner}</h2>}
+        {modalOpen && <LoginModal setModalOpen={setModalOpen} />}
+        {isWinner && <Winner setIsWinner={setIsWinner} winner={winner} />}
+        {shareModalVisible && <ShareModal setShareModalVisible={setShareModalVisible} wheel={wheel} />}
+        <div className={isAdmin ? "ads" : ""}>
         </div>
         <div className="wheel-display">
           <div className="pointer"></div>
@@ -158,10 +241,10 @@ const Wheel = ({ isAdmin }) => {
               {wheel.names.map((name, index) => (
                 <text
                   key={index}
-                  x="70%"
-                  y="20%"
-                  textAnchor="center"
-                  dominantBaseline="center"
+                  x="90%"
+                  y="50%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
                   fontSize="4"
                   fill="#fff"
                   transform={`rotate(${(360 / wheel.names.length) * index}, 50, 50)`}
@@ -173,26 +256,27 @@ const Wheel = ({ isAdmin }) => {
             <div className="center-circle"></div>
           </div>
         </div>
-        <div className="wheel-settings">
+        <div className={isAdmin ? "wheel-settings" : ""}>
           {isAdmin && (
-            <>
+            <div className="settings">
               <div className="list-hdr">
                 <nav>
                   <ul>
-                    <li onClick={() => { setEntries(true); setResults(false); }}>
+                    <li className={entries ? 'active' : ''} onClick={() => { setEntries(true); setResults(false); setHistory(false); }}>
                       <p>Entries <span>{wheel.names.length}</span></p>
                     </li>
-                    <li className='active' onClick={() => { setResults(true); setEntries(false) }}>
-                      <p>Result <span>{wheel.names.length}</span></p>
+                    <li className={results ? 'active' : ''} onClick={() => { setResults(true); setEntries(false); setHistory(false); }}>
+                      <p>Results <span>{wheel.results.length}</span></p>
                     </li>
-                    <li>
-                      <p><input type="checkbox" /><span>Hide</span></p>
+                    <li className={history ? 'active' : ''} onClick={() => { setHistory(true); setEntries(false); setResults(false); }}>
+                      <p>History <span>{adminWheels.filter(w => w.results.length > 0).length}</span></p>
                     </li>
                   </ul>
                 </nav>
               </div>
-              {entries ?
-                <>
+
+              {entries && (
+                <div className="name-section">
                   <div className="names-list">
                     <div className="name-entries">
                       {wheel.names.map((name, index) => (
@@ -214,33 +298,63 @@ const Wheel = ({ isAdmin }) => {
                       placeholder="Add new name"
                     />
                     <button onClick={handleAddName}>Add Name</button>
-                    <button onClick={handleShareLink}>Share Wheel Link</button>
                   </div>
-                </>
-                : results ?
-                  <div className="results-list">
-                    {wheel.results.length > 0 ? (
-                      <ul>
-                        {wheel.results.map((result, index) => (
-                          <li key={index}>
-                            <p><strong>username:</strong> {result.username}</p>
-                            <p><strong>Winner:</strong> {result.winner}</p>
-                            <p><strong>Date:</strong> {new Date(result.date).toLocaleDateString()}</p>
-                            <p><strong>Time:</strong> {new Date(result.date).toLocaleTimeString()}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>No results yet</p>
-                    )}
-                  </div>
-                  :
-                  ''
-              }
-            </>
+                </div>
+              )}
+
+              {results && (
+                <div className="results-list">
+                  {wheel.results.length > 0 ? (
+                    <ul>
+                      {wheel.results.map((result, index) => (
+                        <li key={index}>
+                          <p><strong>Username:</strong> {result.username}</p>
+                          <p><strong>Winner:</strong> {result.winner}</p>
+                          <p><strong>Date:</strong> {new Date(result.date).toLocaleDateString()}</p>
+                          <p><strong>Time:</strong> {new Date(result.date).toLocaleTimeString()}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No results yet</p>
+                  )}
+                </div>
+              )}
+
+              {history && (
+                <div className="history-list">
+                  {adminWheels.filter(wheel => wheel.results.length > 0).length > 0 ? (
+                    <ul>
+                      {adminWheels.filter(wheel => wheel.results.length > 0).map((wheel, index) => (
+                        <li className="list-data" key={index}>
+                          <div className="wheel-id" onClick={() => toggleWheelResults(wheel.id)}>
+                            <span>Wheel ID:</span> {wheel.id}
+                          </div>
+                          {expandedWheels.includes(wheel.id) && (
+                            <ul className="list-result">
+                              {wheel.results.map((result, idx) => (
+                                <li key={idx}>
+                                  <p><strong>Username:</strong> {result.username}</p>
+                                  <p><strong>Winner:</strong> {result.winner}</p>
+                                  <p><strong>Date:</strong> {new Date(result.date).toLocaleDateString()}</p>
+                                  <p><strong>Time:</strong> {new Date(result.date).toLocaleTimeString()}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No wheels with results available yet.</p>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
+      {/* <Sponsors /> */}
     </div>
   );
 };
