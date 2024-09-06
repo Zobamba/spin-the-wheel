@@ -1,9 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faAngleUp, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faList, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import './Header.scss';
 
-const Header = ({ onNew, isAdmin, isModalVisible, setIsModalVisible, setShareModalVisible }) => {
+const Header = ({
+  onNew, isAdmin,
+  isModalVisible,
+  setIsModalVisible,
+  setShareModalVisible, setViewResults }) => {
   return (
     <header>
       <div className="header">
@@ -21,6 +25,13 @@ const Header = ({ onNew, isAdmin, isModalVisible, setIsModalVisible, setShareMod
                 <li onClick={() => setShareModalVisible(true)}>
                   <span><FontAwesomeIcon icon={faShareAlt} /></span>
                   <p>Share</p>
+                </li>
+              }
+              {
+                !isAdmin &&
+                <li onClick={() => setViewResults(true)}>
+                  <span><FontAwesomeIcon icon={faList} /></span>
+                  <p>View Results</p>
                 </li>
               }
               <li onClick={() => setIsModalVisible(!isModalVisible)}>

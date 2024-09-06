@@ -7,26 +7,28 @@
   left: 0;
   z-index: 10000;
   transition: all 0.5s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
-  .modal {
+  .guest-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     width: 45%;
+    height: 75%;
     margin: auto;
     border-radius: 40px;
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    overflow-y: hidden;
 
     .modal-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
       margin: 20px;
       padding: 10px;
+      width: 100%;
 
       .hdr {
         margin: auto;
@@ -54,50 +56,49 @@
         }
       }
 
-      .link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .txt {
+        margin-top: 1rem;
 
-        h6 {
-          border: 1px dotted #3183ff;
-          border-radius: 4px;
-          padding: 0.5rem;
-          margin-right: 0.5rem;
-          background-color: #f9f9f9;
-        }
-
-        button {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.5rem 1rem;
-          background: none;
-          border: 0.5px solid #3183ff;
-          border-radius: 25px;
+        p {
           color: #3183ff;
-          font-size: 12px;
+          margin: 0;
+          padding: 0.5rem 0;
+          font-size: 16px;
           font-family: "Montserrat", sans-serif;
-          cursor: pointer;
-
-          img {
-            width: 15px;
-            height: 15px;
-            margin-left: 10px;
-          }
+          font-weight: 700;
         }
       }
 
-      .winner {
+      .spin-results-list {
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f9f9f9;
         margin: 1rem 0;
+        height: 16rem;
+        width: 90%;
+        overflow-y: scroll !important;
 
-        h2 {
-          color: #333;
-          margin: 0;
-          padding: 0.5rem 0;
-          font-size: 20px;
-          font-family: "Montserrat", sans-serif;
-          font-weight: 700;
+        ul {
+          list-style: none;
+          padding: 0;
+
+          li {
+            padding: 0;
+            border-bottom: 1px solid #ddd;
+
+            p {
+              margin: 1rem 0;
+              color: #333;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+
+            strong {
+              color: #333;
+              font-weight: 700;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+          }
         }
       }
 
@@ -107,7 +108,8 @@
         justify-content: space-between;
         margin: 0;
 
-        .close {
+        .close,
+        .download {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -134,19 +136,9 @@
             }
           }
         }
-      }
 
-      .success {
-        position: absolute;
-
-
-        p {
-          color: #44b34b;
+        .download {
           margin: 0;
-          padding: 0.5rem 0;
-          font-size: 16px;
-          font-family: "Montserrat", sans-serif;
-          font-weight: 700;
         }
       }
     }

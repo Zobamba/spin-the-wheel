@@ -7,8 +7,9 @@ import clap from '../sounds/clap.mp3';
 import Header from './Header';
 import More from './More';
 import ShareModal from './ShareModal';
-// import Sponsors from './Sponsors';
+import Sponsors from './Sponsors';
 import LoginModal from './LoginModal';
+import GuestUserSpinResults from './GuestUserSpinResults';
 import Winner from './Winner';
 import './Wheel.scss';
 
@@ -26,10 +27,12 @@ const Wheel = ({ isAdmin }) => {
   const [results, setResults] = useState(false);
   const [entries, setEntries] = useState(true);
   const [history, setHistory] = useState(false);
+  const [guestResults, setGuestResults] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState();
   const [shareModalVisible, setShareModalVisible] = useState();
   const [modalOpen, setModalOpen] = useState(true);
+  const [viewResults, setViewResults] = useState(false);
 
   const wheelRef = useRef();
   const spinAudioRef = useRef(new Audio(spin));
@@ -136,7 +139,27 @@ const Wheel = ({ isAdmin }) => {
       }
 
       const newWinner = wheel.names[winningIndex];
-      const username = localStorage.getItem('name');
+      const username = localStorage.getItem('name') || 'Guest';  // Default to "Guest" if no name
+
+      // If not an admin, store guest user results
+      if (!isAdmin) {
+        const newResult = {
+          username,
+          winner: newWinner,
+          date: new Date(),
+        };
+
+        // Update guest results state
+        setGuestResults((prevResults) => [
+          ...prevResults,
+          newResult,
+        ]);
+
+        // Update session storage for guest results
+        const guestResultsFromSession = JSON.parse(sessionStorage.getItem(`wheel_${wheel.id}_guestResults`)) || guestResults;
+        guestResultsFromSession.push(newResult);
+        sessionStorage.setItem(`wheel_${wheel.id}_guestResults`, JSON.stringify(guestResultsFromSession));
+      }
 
       setWinner(newWinner);
       setWheel({
@@ -209,6 +232,35 @@ const Wheel = ({ isAdmin }) => {
     return `M${x},${y} L${startX},${startY} A${radius},${radius} 0 0,1 ${endX},${endY} Z`;
   };
 
+  const convertToCSV = (data) => {
+    const header = ['Index', 'Username', 'Winner', 'Date', 'Time'];
+    const rows = data.map((result, index) => [
+      index + 1,
+      result.username,
+      result.winner,
+      new Date(result.date).toLocaleDateString(),
+      new Date(result.date).toLocaleTimeString()
+    ]);
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+      + header.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
+
+    return csvContent;
+  };
+
+  const handleDownloadCSV = (xWheel) => {
+    const csvContent = convertToCSV(xWheel.results);
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "spin-results.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   return (
     <div className="container">
       <Header
@@ -217,6 +269,7 @@ const Wheel = ({ isAdmin }) => {
         setIsModalVisible={setIsModalVisible}
         setShareModalVisible={setShareModalVisible}
         isAdmin={isAdmin}
+        setViewResults={setViewResults}
       />
       <div className="more">
         {isModalVisible && <More />}
@@ -225,6 +278,7 @@ const Wheel = ({ isAdmin }) => {
         {modalOpen && <LoginModal setModalOpen={setModalOpen} />}
         {isWinner && <Winner setIsWinner={setIsWinner} winner={winner} />}
         {shareModalVisible && <ShareModal setShareModalVisible={setShareModalVisible} wheel={wheel} />}
+        {viewResults && <GuestUserSpinResults setViewResults={setViewResults} wheel={wheel} />}
         <div className={isAdmin ? "ads" : ""}>
         </div>
         <div className="wheel-display">
@@ -305,16 +359,22 @@ const Wheel = ({ isAdmin }) => {
               {results && (
                 <div className="results-list">
                   {wheel.results.length > 0 ? (
-                    <ul>
-                      {wheel.results.map((result, index) => (
-                        <li key={index}>
-                          <p><strong>Username:</strong> {result.username}</p>
-                          <p><strong>Winner:</strong> {result.winner}</p>
-                          <p><strong>Date:</strong> {new Date(result.date).toLocaleDateString()}</p>
-                          <p><strong>Time:</strong> {new Date(result.date).toLocaleTimeString()}</p>
-                        </li>
-                      ))}
-                    </ul>
+                    <>
+                      <div className="download">
+                        <button onClick={() => { handleDownloadCSV(wheel) }}>Download CSV</button>
+                      </div>
+                      <ul>
+                        {wheel.results.map((result, index) => (
+                          <li key={index}>
+                            <p><strong>Username:</strong> {result.username}</p>
+                            <p><strong>Winner:</strong> {result.winner}</p>
+                            <p><strong>Date:</strong> {new Date(result.date).toLocaleDateString()}</p>
+                            <p><strong>Time:</strong> {new Date(result.date).toLocaleTimeString()}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+
                   ) : (
                     <p>No results yet</p>
                   )}
@@ -329,6 +389,9 @@ const Wheel = ({ isAdmin }) => {
                         <li className="list-data" key={index}>
                           <div className="wheel-id" onClick={() => toggleWheelResults(wheel.id)}>
                             <span>Wheel ID:</span> {wheel.id}
+                            <div className="download">
+                              <button onClick={() => { handleDownloadCSV(wheel) }}>Download CSV</button>
+                            </div>
                           </div>
                           {expandedWheels.includes(wheel.id) && (
                             <ul className="list-result">
@@ -354,7 +417,7 @@ const Wheel = ({ isAdmin }) => {
           )}
         </div>
       </div>
-      {/* <Sponsors /> */}
+      {!isAdmin && <Sponsors />}
     </div>
   );
 };

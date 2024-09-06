@@ -1,8 +1,7 @@
 .body {
   width: auto;
   padding: 0 1rem;
-  margin: 2rem 0;
-  margin-top: 0;
+  margin: 1rem 0;
 
   .stats {
     white-space: nowrap;
@@ -86,16 +85,7 @@
       background-color: #3183ff;
       color: #fff;
     }
-
-    .stat-box:nth-child(2) {
-    }
-
-    .stat-box:nth-child(3) {
-    }
-
-    .stat-box:last-child {
-    }
-
+    
     .stat-box {
       display: flex;
       align-items: center;
