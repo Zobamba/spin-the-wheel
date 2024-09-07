@@ -36,10 +36,10 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
     const headerHeight = 10;
     const rowHeight = 10;
     const tableWidth = pageWidth - 2 * margin;
-    const columnWidths = [20, 40, 40, 40, 40]; // Adjust column widths as needed
+    const columnWidths = [20, 40, 40, 40, 40];
     const columnHeaders = ['Index', 'Username', 'Winner', 'Date', 'Time'];
   
-    let y = 30; // Starting Y position for table
+    let y = 30;
     const addResultsPage = () => {
       doc.addPage();
       doc.setFont('Helvetica', 'bold');
@@ -49,26 +49,26 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
-      y = 30; // Reset y position for the new page
+      y = 30;
     };
   
     const drawTableHeader = () => {
       doc.setFont('Helvetica', 'bold');
-      doc.setFillColor('#3183ff'); // Header background color
+      doc.setFillColor('#3183ff');
       doc.rect(margin, y - headerHeight, tableWidth, headerHeight, 'F');
-      doc.setTextColor(255, 255, 255); // Header text color
-      let x = margin; // Starting X position for header
+      doc.setTextColor(255, 255, 255);
+      let x = margin;
       columnHeaders.forEach((header, index) => {
         doc.text(header, x + columnWidths[index] / 2, y - 2, { align: 'center' });
         x += columnWidths[index];
       });
-      doc.setTextColor(0, 0, 0); // Reset text color
-      y += headerHeight; // Move y position below header
+      doc.setTextColor(0, 0, 0);
+      y += headerHeight;
     };
   
     const drawTableRow = (index, result) => {
       doc.setFont('Helvetica', 'normal');
-      let x = margin; // Starting X position for row
+      let x = margin;
       const rowData = [
         index + 1,
         result.username,
@@ -87,10 +87,9 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
   
     if (guestResults.length > 0) {
       guestResults.forEach((result, index) => {
-        // Check if the content will overflow the page
         if (y + rowHeight > pageHeight) {
-          addResultsPage(); // Add a new page if content exceeds the current page
-          drawTableHeader(); // Redraw the table header on the new page
+          addResultsPage();
+          drawTableHeader();
         }
   
         drawTableRow(index, result);

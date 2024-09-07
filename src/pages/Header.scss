@@ -1,3 +1,14 @@
+@font-face {
+  font-family: "Hanson Bold";
+  src:
+    url("../fonts/Hanson-Bold.otf") format("opentype"),
+    url("../fonts/Hanson-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
 header {
   display: flex;
   justify-content: center;
@@ -21,7 +32,7 @@ header {
         line-height: 2.45rem;
         font-weight: 800;
         font-size: 1.5rem;
-        font-family: "Montserrat", sans-serif;
+        font-family: "Hanson Bold", sans-serif;
         color: #3183ff;
         margin: 0 2rem;
 
@@ -57,7 +68,7 @@ header {
             P {
               font-size: 16px;
               font-weight: 700;
-              font-family: Arial, Helvetica, sans-serif;
+              font-family: "Montserrat", sans-serif;
               color: #3183ff;
             }
 
@@ -67,6 +78,67 @@ header {
           }
         }
       }
+    }
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  header {
+    height: auto;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1rem;
+  }
+
+  .header-title {
+    text-align: center;
+    width: 100%;
+
+    h2 {
+      font-size: 1.25rem;
+      margin: 1rem 0;
+      line-height: 2rem;
+      white-space: nowrap;
+    }
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: center;
+    
+    nav {
+      ul {
+        width: 100%;
+
+        li {
+          width: 100%;
+          padding: 0.5rem 0;
+          
+          P {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Tablet Responsiveness */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .header {
+    padding: 0 1.5rem;
+  }
+
+  .nav nav ul {
+    width: 100%;
+    justify-content: space-around;
+
+    li P {
+      font-size: 15px;
     }
   }
 }

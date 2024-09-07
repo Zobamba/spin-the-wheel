@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { v4 as uuidv4 } from 'uuid';
 import spin from '../sounds/spin.mp3';
@@ -15,6 +15,7 @@ import './Wheel.scss';
 
 const Wheel = ({ isAdmin }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [wheel, setWheel] = useState(null);
   const [adminWheels, setAdminWheels] = useState({});
@@ -23,6 +24,7 @@ const Wheel = ({ isAdmin }) => {
   const [newName, setNewName] = useState('');
   const [winner, setWinner] = useState(null);
   const [isWinner, setIsWinner] = useState(false);
+  const [wheelName, setWheelName] = useState('');
 
   const [results, setResults] = useState(false);
   const [entries, setEntries] = useState(true);
@@ -46,7 +48,7 @@ const Wheel = ({ isAdmin }) => {
       setAdminWheels(storedWheels);
 
       const adminWheelId = id || uuidv4();
-      const existingWheel = storedWheels[adminWheelId] || { id: adminWheelId, names: [...preExistingNames], results: [] };
+      const existingWheel = storedWheels[adminWheelId] || { name: '', id: adminWheelId, names: [...preExistingNames], results: [] };
       setWheel(existingWheel);
     } else {
       const existingWheel = storedWheels[id] || { id, names: [...preExistingNames], results: [] };
@@ -69,6 +71,15 @@ const Wheel = ({ isAdmin }) => {
     }
   }, [isAdmin]);
 
+  useEffect(() => {
+    const deletedWheels = JSON.parse(localStorage.getItem('deletedWheels')) || [];
+
+    if (!isAdmin && deletedWheels.includes(id)) {
+      alert("This wheel is no longer accessible.");
+      navigate('/not-found');
+    }
+  }, [id, isAdmin, navigate]);
+
   const handleSpinWheel = () => {
     if (wheel.names.length === 0) return;
 
@@ -90,6 +101,7 @@ const Wheel = ({ isAdmin }) => {
     setWheel(newWheel);
     setEntries(true);
     setResults(false);
+    setHistory(false);
   };
 
   const spinAnimation = (randomIndex) => {
@@ -260,6 +272,34 @@ const Wheel = ({ isAdmin }) => {
     document.body.removeChild(link);
   };
 
+  const saveWheelToLocalStorage = (updatedWheel) => {
+    const updatedWheels = { ...adminWheels, [updatedWheel.id]: updatedWheel };
+    localStorage.setItem('wheels', JSON.stringify(updatedWheels));
+  };
+
+  const handleWheelNameChange = (value) => {
+    setWheelName(value);
+    const updatedWheel = { ...wheel, name: value };
+    setWheel(updatedWheel);
+    saveWheelToLocalStorage(updatedWheel);
+  };
+
+  const handleDeleteWheel = (adminWheelId) => {
+    const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
+
+    if (storedWheels.hasOwnProperty(adminWheelId)) {
+      delete storedWheels[adminWheelId];
+      localStorage.setItem('wheels', JSON.stringify(storedWheels));
+
+      const deletedWheels = JSON.parse(localStorage.getItem('deletedWheels')) || [];
+      deletedWheels.push(adminWheelId);
+      localStorage.setItem('deletedWheels', JSON.stringify(deletedWheels));
+
+      setAdminWheels(Object.values(storedWheels));
+    } else {
+      console.error(`Wheel with id ${adminWheelId} does not exist.`);
+    }
+  };
 
   return (
     <div className="container">
@@ -300,6 +340,7 @@ const Wheel = ({ isAdmin }) => {
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fontSize="4"
+                  fontFamily="Montserrat, sans-serif"
                   fill="#fff"
                   transform={`rotate(${(360 / wheel.names.length) * index}, 50, 50)`}
                 >
@@ -331,6 +372,14 @@ const Wheel = ({ isAdmin }) => {
 
               {entries && (
                 <div className="name-section">
+                  <div className="wheel-name">
+                    <input
+                      type="text"
+                      value={wheelName}
+                      onChange={(e) => handleWheelNameChange(e.target.value)}
+                      placeholder="Type wheel name here..."
+                    />
+                  </div>
                   <div className="names-list">
                     <div className="name-entries">
                       {wheel.names.map((name, index) => (
@@ -383,14 +432,21 @@ const Wheel = ({ isAdmin }) => {
 
               {history && (
                 <div className="history-list">
-                  {adminWheels.filter(wheel => wheel.results.length > 0).length > 0 ? (
+                  {Object.values(adminWheels).filter(wheel => wheel.results.length > 0).length > 0 ? (
                     <ul>
-                      {adminWheels.filter(wheel => wheel.results.length > 0).map((wheel, index) => (
+                      {Object.values(adminWheels).filter(wheel => wheel.results.length > 0).map((wheel, index) => (
                         <li className="list-data" key={index}>
-                          <div className="wheel-id" onClick={() => toggleWheelResults(wheel.id)}>
-                            <span>Wheel ID:</span> {wheel.id}
+                          <div className="wheel-id">
+                            <div onClick={() => toggleWheelResults(wheel.id)}>
+                              {wheel.name ? (
+                                <span className='wheel-name'>{wheel.name}</span>
+                              ) : (
+                                <p><span>Wheel ID:</span> {wheel.id}</p>
+                              )}
+                            </div>
                             <div className="download">
                               <button onClick={() => { handleDownloadCSV(wheel) }}>Download CSV</button>
+                              <button onClick={() => handleDeleteWheel(wheel.id)} className="delete">Delete</button>
                             </div>
                           </div>
                           {expandedWheels.includes(wheel.id) && (

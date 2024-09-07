@@ -15,21 +15,21 @@ const Sponsors = () => {
         <li className="stat-box">
           <div className="box-cnt">
             <div className="box-data">
-            <h1>Sponsor 2</h1>
+              <h1>Sponsor 2</h1>
             </div>
           </div>
         </li>
         <li className="stat-box">
           <div className="box-cnt">
             <div className="box-data">
-            <h1>Sponsor 3</h1>
+              <h1>Sponsor 3</h1>
             </div>
           </div>
         </li>
         <li className="stat-box">
           <div className="box-cnt">
             <div className="box-data">
-            <h1>Sponsor 4</h1>
+              <h1>Sponsor 4</h1>
             </div>
           </div>
         </li>

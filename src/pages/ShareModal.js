@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt } from '@fortawesome/free-solid-svg-icons';
-import { v4 as uuidv4 } from 'uuid';
 import './ShareModal.scss';
 
 const ShareModal = ({ setShareModalVisible, wheel }) => {
@@ -17,7 +16,7 @@ const ShareModal = ({ setShareModalVisible, wheel }) => {
     navigator.clipboard.writeText(shareableLink)
       .then(() => {
         setCopySuccess('Link copied!');
-        setTimeout(() => setCopySuccess(''), 2000); // Clear success message after 2 seconds
+        setTimeout(() => setCopySuccess(''), 2000);
       })
       .catch(err => {
         setCopySuccess('Failed to copy link');
@@ -26,16 +25,16 @@ const ShareModal = ({ setShareModalVisible, wheel }) => {
 
   useEffect(() => {
     const handleShareLink = () => {
-      const newWheelId = uuidv4();
-      const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
-      storedWheels[newWheelId] = wheel;
-      localStorage.setItem('wheels', JSON.stringify(storedWheels));
-      setSharableLink(`${window.location.origin}/wheel/${newWheelId}`);
+      if (wheel?.id) {
+        setSharableLink(`${window.location.origin}/wheel/${wheel.id}`);
+      } else {
+        console.error('Wheel ID is missing.');
+      }
     };
-
+  
     handleShareLink();
   }, [wheel]);
-
+  
   return (
     <div className="modal-container">
       <div className="modal">

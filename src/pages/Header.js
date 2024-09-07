@@ -12,7 +12,7 @@ const Header = ({
     <header>
       <div className="header">
         <div className="header-title">
-          <h2>WHEEL OF <span>NAMES</span></h2>
+          <h2>SPIN <span>THE</span> WHEEL</h2>
         </div>
         <div className="nav">
           <nav>

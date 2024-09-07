@@ -64,8 +64,8 @@ const LoginModal = ({ setModalOpen }) => {
     <div className="modal-container" onClick={handleCloseModal}>
       <div className="modal">
         <div className="modal-content">
-          <div className="hdr">
-            <h2>Welcome To Wheel Of Names</h2>
+          <div className="header-txt">
+            <h2>Welcome To Spin The Wheel</h2>
           </div>
           <div className="txt">
             <p>Please Login</p>
@@ -97,7 +97,7 @@ const LoginModal = ({ setModalOpen }) => {
                 <input
                   type={passwordVisible ? "text" : "password"}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder='Create password' />
+                  placeholder='Enter your password' />
                 <FontAwesomeIcon
                   icon={passwordVisible ? faEye : faEyeSlash}
                   className="eye-icon"

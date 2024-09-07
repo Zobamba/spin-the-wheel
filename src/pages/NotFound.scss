@@ -1,0 +1,22 @@
+.not-found-container {
+  text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+
+  h1 {
+    font-size: 5rem;
+    color: #ff6b6b;
+    font-family: "Hanson Bold", sans-serif;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    color: #343a40;
+    font-family: "Montserrat", sans-serif;
+  }
+}
