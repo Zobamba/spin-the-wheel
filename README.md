@@ -1,5 +1,5 @@
-# Wheel-Of-Names
-A Wheel Of Names React Application
+# Spin-The-Wheel
+A Wheel Spin React Application
 
 =======
 # Getting Started with Create React App
