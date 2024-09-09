@@ -33,7 +33,7 @@ const Wheel = ({ isAdmin }) => {
 
   const [isModalVisible, setIsModalVisible] = useState();
   const [shareModalVisible, setShareModalVisible] = useState();
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const [viewResults, setViewResults] = useState(false);
 
   const wheelRef = useRef();
@@ -57,12 +57,20 @@ const Wheel = ({ isAdmin }) => {
   }, [id, isAdmin]);
 
   useEffect(() => {
+    const loggedInUserToken = localStorage.getItem('spin_the_wheel_token');
+    if (loggedInUserToken) {
+      setModalOpen(false);
+    } else {
+      setModalOpen(true);
+    }
+
     if (wheel) {
       const storedWheels = JSON.parse(localStorage.getItem('wheels')) || {};
       storedWheels[wheel.id] = wheel;
       localStorage.setItem('wheels', JSON.stringify(storedWheels));
     }
   }, [wheel]);
+
 
   useEffect(() => {
     if (isAdmin) {
@@ -151,7 +159,7 @@ const Wheel = ({ isAdmin }) => {
       }
 
       const newWinner = wheel.names[winningIndex];
-      const username = localStorage.getItem('name') || 'Guest';  // Default to "Guest" if no name
+      const username = localStorage.getItem('name') || 'Guest';
 
       // If not an admin, store guest user results
       if (!isAdmin) {
@@ -332,21 +340,27 @@ const Wheel = ({ isAdmin }) => {
                   fill={`hsl(${(index * 137.5) % 360}, 70%, 60%)`}
                 />
               ))}
-              {wheel.names.map((name, index) => (
-                <text
-                  key={index}
-                  x="90%"
-                  y="50%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fontSize="4"
-                  fontFamily="Montserrat, sans-serif"
-                  fill="#fff"
-                  transform={`rotate(${(360 / wheel.names.length) * index}, 50, 50)`}
-                >
-                  {name}
-                </text>
-              ))}
+              {/* Calculate the length of the longest name */}
+              {(() => {
+                const maxLength = Math.max(...wheel.names.map((name) => name.length));
+                const fontSize = Math.max(4, 13 - maxLength); // Uniform font size based on longest name
+
+                return wheel.names.map((name, index) => (
+                  <text
+                    key={index}
+                    x="80%"
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={fontSize}
+                    fontFamily="Montserrat, sans-serif"
+                    fill="#fff"
+                    transform={`rotate(${(360 / wheel.names.length) * index}, 50, 50)`}
+                  >
+                    {name.length > 10 ? `${name.substring(0, 10)}...` : name}
+                  </text>
+                ));
+              })()}
             </svg>
             <div className="center-circle"></div>
           </div>

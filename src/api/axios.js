@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// const BASE_URL = 'https://spottrbackendapiv2.azurewebsites.net';
-const BASE_URL = 'https://delic-be.onrender.com';
+const BASE_URL = 'https://spottrbackendapiv2.azurewebsites.net';
 
 export default axios.create({
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
 });

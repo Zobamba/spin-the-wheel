@@ -10,7 +10,7 @@ const More = () => {
   const email = localStorage.getItem('email');
   
   const logout = () => {
-    let keysToRemove = ["token", "email", "firstName"];
+    let keysToRemove = ["spin_the_wheel_token", "email", "firstName"];
 
     keysToRemove.forEach((k) => {
       localStorage.removeItem(k)
