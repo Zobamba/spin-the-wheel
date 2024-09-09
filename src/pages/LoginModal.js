@@ -26,8 +26,8 @@ const LoginModal = ({ setModalOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrMsg('')
-
+    setErrMsg('');
+  
     try {
       const response = await axios.post('/api/v1/auth/login',
         JSON.stringify({ email, password }),
@@ -37,15 +37,13 @@ const LoginModal = ({ setModalOpen }) => {
           },
         }
       );
-      localStorage.setItem('spin_the_wheel_token', response?.data.token);
-      localStorage.setItem('email', response?.data?.data.email);
-      localStorage.setItem('name', response?.data?.data.firstName);
-
-      if (response) {
-        handleCloseModal();
-      }
+      const { token, data } = response?.data;
+      localStorage.setItem('spin_the_wheel_token', token);
+      localStorage.setItem('email', data?.email);
+      localStorage.setItem('name', data?.firstName);
+  
+      handleCloseModal();
     } catch (error) {
-
       if (error.response && error.response.data) {
         if (Array.isArray(error.response.data.errors)) {
           setErrMsg(error.response.data.errors);
@@ -57,8 +55,8 @@ const LoginModal = ({ setModalOpen }) => {
       }
       errRef?.current?.focus();
     }
-  }
-
+  };
+  
   return (
     <div className="modal-container">
       <div className="modal">

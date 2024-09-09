@@ -343,12 +343,12 @@ const Wheel = ({ isAdmin }) => {
               {/* Calculate the length of the longest name */}
               {(() => {
                 const maxLength = Math.max(...wheel.names.map((name) => name.length));
-                const fontSize = Math.max(4, 13 - maxLength); // Uniform font size based on longest name
+                const fontSize = Math.max(3, 13 - maxLength); // Uniform font size based on longest name
 
                 return wheel.names.map((name, index) => (
                   <text
                     key={index}
-                    x="80%"
+                    x="78%"
                     y="50%"
                     textAnchor="middle"
                     dominantBaseline="middle"
@@ -357,7 +357,7 @@ const Wheel = ({ isAdmin }) => {
                     fill="#fff"
                     transform={`rotate(${(360 / wheel.names.length) * index}, 50, 50)`}
                   >
-                    {name.length > 10 ? `${name.substring(0, 10)}...` : name}
+                    {name.length > 21 ? `${name.substring(0, 21)}...` : name}
                   </text>
                 ));
               })()}
