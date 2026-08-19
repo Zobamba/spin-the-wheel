@@ -171,7 +171,6 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 18rem;
 
             .eye-icon {
               position: absolute;
@@ -186,7 +185,6 @@
 
           input {
             width: 100%;
-            max-width: 18rem;
             height: 2.5rem;
             border: 1px solid #8f8f8f;
             border-radius: 4px;
@@ -247,6 +245,7 @@
           }
 
           .btn {
+            width: 100%;
             margin-top: 10px;
 
             &.btn-reset {
@@ -255,7 +254,6 @@
 
             button {
               width: 100%;
-              max-width: 19rem;
               height: 2.5rem;
               background-color: #3183ff;
               color: #ffffff;
