@@ -7,7 +7,8 @@ const Header = ({
   onNew, isAdmin,
   isModalVisible,
   setIsModalVisible,
-  setShareModalVisible, setViewResults }) => {
+  setShareModalVisible, setViewResults,
+  moreToggleRef }) => {
   return (
     <header>
       <div className="header">
@@ -17,9 +18,7 @@ const Header = ({
         <div className="nav">
           <nav>
             <ul>
-              {isAdmin &&
-                <li onClick={onNew}><p>New</p></li>
-              }
+              <li onClick={onNew}><p>New Wheel</p></li>
               {
                 isAdmin &&
                 <li onClick={() => setShareModalVisible(true)}>
@@ -34,7 +33,7 @@ const Header = ({
                   <p>View Results</p>
                 </li>
               }
-              <li onClick={() => setIsModalVisible(!isModalVisible)}>
+              <li ref={moreToggleRef} onClick={() => setIsModalVisible(!isModalVisible)}>
                 <p>More</p>
                 {!isModalVisible ?
                   <span><FontAwesomeIcon icon={faAngleDown} /></span>

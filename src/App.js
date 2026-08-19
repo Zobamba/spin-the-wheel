@@ -4,19 +4,16 @@ import Wheel from './pages/Wheel';
 import NotFound from './pages/NotFound';
 
 function App() {
-  const email = localStorage.getItem('email');
-  const isAdmin = email === process.env.REACT_APP_ADMIN_EMAIL;
-
   return (
     <div className="App">
       <Routes>
         <Route
           path="/"
-          element={<Wheel isAdmin={isAdmin} />}
+          element={<Wheel />}
         />
         <Route
           path="/wheel/:id"
-          element={<Wheel isAdmin={isAdmin} />}
+          element={<Wheel />}
         />
         <Route
           path="/not-found"

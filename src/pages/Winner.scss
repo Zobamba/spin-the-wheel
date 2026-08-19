@@ -103,8 +103,12 @@
       }
     }
 
+    @media (max-width: 768px) {
+      width: 70%;
+    }
+
     @media (max-width: 480px) {
-      width: 90%;
+      width: 92%;
 
       .modal-content {
         justify-content: center;

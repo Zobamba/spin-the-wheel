@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import axios from '../api/axios';
+import { mockLogin } from '../api/mockAuth';
 import './LoginModal.scss';
 
 const LoginModal = ({ setModalOpen }) => {
@@ -29,14 +29,7 @@ const LoginModal = ({ setModalOpen }) => {
     setErrMsg('');
   
     try {
-      const response = await axios.post('/api/v1/auth/login',
-        JSON.stringify({ email, password }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await mockLogin({ email, password });
       const { token, data } = response?.data;
       localStorage.setItem('spin_the_wheel_token', token);
       localStorage.setItem('email', data?.email);
@@ -66,6 +59,9 @@ const LoginModal = ({ setModalOpen }) => {
           </div>
           <div className="txt">
             <p>Please Login</p>
+          </div>
+          <div className="demo-hint">
+            <p>Demo mode: enter any email and password to sign in — no real account needed.</p>
           </div>
           <div className="form-inputs">
             {Array.isArray(errMsg) ? (

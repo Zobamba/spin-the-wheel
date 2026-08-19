@@ -1,14 +1,20 @@
 import React from 'react'
 import './Winner.scss';
 
-const Winner = ({ setIsWinner, winner }) => {
+const Winner = ({ setIsWinner, winner, onRemoveWinner }) => {
   const handleCloseModal = () => {
     setIsWinner(false);
     document.body.classList.remove('modal-open');
   };
+
+  const handleRemoveWinner = () => {
+    onRemoveWinner();
+    document.body.classList.remove('modal-open');
+  };
+
   return (
-    <div className="modal-container">
-      <div className="modal">
+    <div className="modal-container" onClick={handleCloseModal}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-content">
           <div className="hdr">
             <h2>We have a winner</h2>
@@ -21,7 +27,7 @@ const Winner = ({ setIsWinner, winner }) => {
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="download">
-              <button>Remove</button>
+              <button onClick={handleRemoveWinner} title="Remove this value from the wheel">Remove</button>
             </div>
           </div>
         </div>

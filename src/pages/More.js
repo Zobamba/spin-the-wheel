@@ -28,31 +28,18 @@ const More = () => {
                 <h6>{name}</h6>
                 <p>{email}</p>
               </div>
-              <li>
-                <Link to="https://cliqitgroup.com/contact" target='blank'>
-                  <FontAwesomeIcon className="icon" icon={faComment} />Feedback
-                </Link>
+              <li className="static">
+                <span><FontAwesomeIcon className="icon" icon={faComment} />Feedback</span>
               </li>
-              <li>
-                <Link to="https://cliqitgroup.com/blog/spin-the-wheel" target='blank'>
-                  <FontAwesomeIcon className="icon" icon={faQuestionCircle} />FAQ
-                </Link>
+              <li className="static">
+                <span><FontAwesomeIcon className="icon" icon={faQuestionCircle} />FAQ</span>
               </li>
-              <li>
-                <Link to="https://cliqitgroup.com/privacy" target='blank'>
-                  <FontAwesomeIcon className="icon" icon={faUserSecret} />Privacy policy
-                </Link>
+              <li className="static">
+                <span><FontAwesomeIcon className="icon" icon={faUserSecret} />Privacy policy</span>
               </li>
-              <li>
-                <Link to="https://cliqitgroup.com/terms" target='blank'>
-                  <FontAwesomeIcon className="icon" icon={faLegal} />Terms & conditions
-                </Link>
+              <li className="static">
+                <span><FontAwesomeIcon className="icon" icon={faLegal} />Terms & conditions</span>
               </li>
-              {/* <li>
-                <Link to="/">
-                  <FontAwesomeIcon className="icon" icon={faUserCircle} />My account
-                </Link>
-              </li> */}
               <div className="divider"></div>
               <li >
                 <Link onClick={logout}>

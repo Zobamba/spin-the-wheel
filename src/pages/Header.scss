@@ -52,10 +52,10 @@ header {
         ul {
           display: flex !important;
           align-items: center;
-          justify-content: space-evenly;
+          justify-content: flex-end;
           list-style: none !important;
           padding: 0 0.5rem;
-          width: 20rem;
+          gap: 1.5rem;
 
           li {
             text-align: center;
@@ -64,6 +64,7 @@ header {
             align-items: center;
             justify-content: center;
             height: 2.8rem;
+            white-space: nowrap;
 
             P {
               font-size: 16px;

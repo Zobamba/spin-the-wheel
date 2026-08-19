@@ -73,6 +73,22 @@
         }
       }
 
+      .demo-hint {
+        margin-top: 0.25rem;
+        max-width: 20rem;
+        text-align: center;
+
+        p {
+          color: #6c757d;
+          margin: 0;
+          padding: 0;
+          font-size: 12px;
+          font-style: italic;
+          font-family: "Montserrat", sans-serif;
+          font-weight: 500;
+        }
+      }
+
       .to-do {
         display: flex;
         align-items: center;
@@ -146,23 +162,29 @@
           align-items: center;
           justify-content: center;
           width: 65%;
+          max-width: 20rem;
 
           .input {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
 
             .eye-icon {
               position: absolute;
               cursor: pointer;
-              margin-left: 16rem;
+              right: 0.85rem;
+              top: 50%;
+              transform: translateY(-50%);
               width: 16px;
               height: 16px;
             }
           }
 
           input {
-            width: 18rem;
+            width: 100%;
+            max-width: 18rem;
             height: 2.5rem;
             border: 1px solid #8f8f8f;
             border-radius: 4px;
@@ -230,7 +252,8 @@
             }
 
             button {
-              width: 19rem;
+              width: 100%;
+              max-width: 19rem;
               height: 2.5rem;
               background-color: #3183ff;
               color: #ffffff;
@@ -401,9 +424,15 @@
     }
   }
   
+  @media (max-width: 768px) {
+    .modal {
+      width: 70%;
+    }
+  }
+
   @media (max-width: 480px) {
     .modal {
-      width: 90%;
+      width: 92%;
 
       .modal-content {
         padding: 15px;
@@ -413,6 +442,10 @@
             margin: 0;
             font-size: 18px;
           }
+        }
+
+        .form-inputs form {
+          width: 90%;
         }
       }
     }

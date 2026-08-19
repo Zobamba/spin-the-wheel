@@ -36,8 +36,8 @@ const ShareModal = ({ setShareModalVisible, wheel }) => {
   }, [wheel]);
   
   return (
-    <div className="modal-container">
-      <div className="modal">
+    <div className="modal-container" onClick={handleCloseModal}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-content">
           <div className="hdr">
             <h2><span><FontAwesomeIcon icon={faShareAlt} /></span>Link To Wheel</h2>

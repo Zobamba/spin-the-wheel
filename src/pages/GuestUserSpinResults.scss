@@ -14,12 +14,12 @@
     align-items: center;
     position: absolute;
     width: 45%;
-    height: 75%;
+    max-height: 85vh;
     margin: auto;
     border-radius: 40px;
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    overflow-y: hidden;
+    overflow-y: auto;
 
     .modal-content {
       display: flex;
@@ -148,12 +148,26 @@
       }
     }
 
+    @media (max-width: 768px) {
+      width: 70%;
+    }
+
     @media (max-width: 480px) {
-      width: 90%;
+      width: 92%;
 
       .modal-content {
         justify-content: center;
         align-items: center;
+
+        .spin-results-list {
+          width: 100%;
+        }
+
+        .to-do {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.5rem;
+        }
 
         .info {
           h1 {

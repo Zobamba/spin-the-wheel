@@ -62,7 +62,18 @@
               color: #344767;
               font-weight: 600;
             }
-            
+
+            &.static {
+              cursor: default;
+
+              &:hover {
+                background-color: transparent;
+                box-shadow: none;
+                color: #333;
+                font-weight: normal;
+              }
+            }
+
             .icon {
               margin-right: 15px;
               margin-left: 0;
@@ -70,7 +81,9 @@
               height: 1rem;
             }
 
-            a {
+            a,
+            span {
+              display: block;
               color: #333;
               background: none;
               color: inherit;
@@ -84,10 +97,10 @@
               text-decoration: none;
               text-align: left;
               white-space: no-wrap;
+            }
 
-              &:hover {
-                text-decoration: underline !important;
-              }
+            a:hover {
+              text-decoration: underline !important;
             }
           }
 

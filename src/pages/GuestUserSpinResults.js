@@ -3,8 +3,11 @@ import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import './GuestUserSpinResults.scss';
 
+const sanitizeFilename = (name) => (name || '').trim().replace(/[^a-z0-9-_ ]/gi, '').trim();
+
 const GuestUserSpinResults = ({ setViewResults, wheel }) => {
   const [guestResults, setGuestResults] = useState([]);
+  const wheelName = wheel.name || 'Untitled Wheel';
 
   useEffect(() => {
     const storedGuestResults = JSON.parse(sessionStorage.getItem(`wheel_${wheel.id}_guestResults`)) || [];
@@ -22,7 +25,7 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
     doc.setFontSize(20);
     doc.setTextColor('#3183ff');
     const pageWidth = doc.internal.pageSize.getWidth();
-    const title = `Your Spin Results (${guestResults.length})`;
+    const title = `${wheelName} - Your Spin Results (${guestResults.length})`;
     const titleWidth = doc.getTextWidth(title);
     const titleX = (pageWidth - titleWidth) / 2;
     doc.text(title, titleX, 10);
@@ -98,7 +101,7 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
       doc.text('No results yet. Spin to start!', margin, y);
     }
   
-    doc.save('spin-results.pdf');
+    doc.save(`${sanitizeFilename(wheelName) || 'spin-results'}.pdf`);
   };
 
   const handleDownloadExcel = () => {
@@ -113,20 +116,21 @@ const GuestUserSpinResults = ({ setViewResults, wheel }) => {
     );
   
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Spin Results');
-  
-    XLSX.writeFile(wb, 'spin-results.xlsx');
-  };  
+    const sheetName = sanitizeFilename(wheelName).substring(0, 31) || 'Spin Results';
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+    XLSX.writeFile(wb, `${sanitizeFilename(wheelName) || 'spin-results'}.xlsx`);
+  };
   
   return (
-    <div className="modal-container">
-      <div className="guest-modal">
+    <div className="modal-container" onClick={handleCloseModal}>
+      <div className="guest-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-content">
           <div className="hdr">
-            <h2>Your Spin Results</h2>
+            <h2>{wheelName}</h2>
           </div>
           <div className="txt">
-            <p>Checkout your spin results over time: (<span>{guestResults.length}</span>)</p>
+            <p>Your spin results over time: (<span>{guestResults.length}</span>)</p>
           </div>
           {guestResults.length > 0 && (
             <div className="spin-results-list">
